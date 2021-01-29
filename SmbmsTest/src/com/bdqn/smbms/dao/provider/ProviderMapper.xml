@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdqn.smbms.dao.provider.ProviderMapper">
+	<insert id="addProvider">
+		INSERT INTO smbms_provider (id,proCode,proName,proDesc,proContact,proPhone,proAddress,proFax,createdBy,
+		creationDate,modifyDate,modifyBy)
+		VALUES(#{id},#{proCode},#{proName},#{proDesc},#{proContact},#{proPhone},#{proAddress},#{proFax},
+		#{createdBy},#{creationDate},#{modifyDate},#{modifyBy})
+	</insert>
+	<select  id="getProviderList" resultType="Provider">
+			SELECT * FROM smbms_provider WHERE proName  like CONCAT("%",#{proName},"%")
+			and proCode like CONCAT("%",#{proCode},"%");
+	</select>
+	<delete id="deleteProviderById" parameterType="Integer">
+	delete from smbms_provider where id=#{id}
+	</delete>
+	<select id="getProviderById" resultType="Provider" parameterType="int">
+	SELECT * FROM smbms_provider where id=#{id}
+	</select>
+	<update id="modify"  parameterType="Provider">
+ 	UPDATE smbms_provider SET proCode=#{proCode},proName=#{proName} where id=#{id}
+ 	</update>
+</mapper>

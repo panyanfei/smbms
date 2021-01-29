@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdqn.smbms.dao.user.UserMapper">
+	<insert id="add" parameterType="User">
+		insert into
+		smbms_user(userCode,userName,userPassword,userRole,gender,birthday,phone,address,creationDate,createdBy)values
+		(#{userCode},#{userName},#{userPassword},#{userRole},#{gender},#{birthday},#{phone},#{address},#{creationDate},#{createdBy})
+	</insert>
+	<!-- 通过userCode获取User -->
+	<select id="getLoginUser" resultType="User" parameterType="String">
+		SELECT * FROM smbms_user WHERE userCode =#{userCode}
+	</select>
+	<!-- 通过条件查询 -->
+	<select id="getUserList" resultType="User">
+		select
+		u.*,r.roleName as userRoleName from smbms_user u,smbms_role r
+		<where>
+			u.userRole = r.id
+			<if test="userName!=null ">
+				AND u.userName like CONCAT("%",#{userName},"%")
+			</if>
+			<if test="userRole!=null ">
+				AND u.userRole=#{userRole}
+			</if>
+		</where>
+		<!-- 当上面条件都不满足时，走otherwise里的内容 -->
+		limit #{currentPageNo},#{pageSize}
+	</select>
+	<!-- 通过条件查询-用户表记录数 -->
+	<delete id="deleteUserById" parameterType="int">
+		delete from smbms_user
+		where id=#{id}
+	</delete>
+	<!-- 通过userId获取user -->
+	<select id="getUserById" resultType="User">
+		select u.*,r.roleName as userRoleName, r.id as rId from smbms_user
+		u,smbms_role r
+		<where>
+			u.userRole = r.id
+			<if test="id!=null ">
+				AND u.id=#{id}
+			</if>
+		</where>
+	</select>
+	<!-- 修改用户信息 -->
+	<update id="modify">
+		UPDATE smbms_user SET userName=#{userName},
+		gender=#{gender},birthday=#{birthday},phone=#{phone},address=#{address},userRole=#{userRole},modifyBy=#{modifyBy},modifyDate=#{modifyDate}
+		where id =#{id}
+	</update>
+	<!-- 修改当前用户密码 -->
+	<update id="updatePwd">
+		update smbms_user set userPassword=#{userPassword}
+		where id =#{id}
+	</update>
+
+	<select id="getUserCount" resultType="int">
+		select count(1) as count from smbms_user u,smbms_role r
+		<where>
+			u.userRole = r.id
+			<if test="userName!=null">
+				and u.userName like concat("%",#{userName},"%")
+			</if>
+			<if test="userRole > 0">
+				and u.userRole =#{userRole}
+			</if>
+		</where>
+	</select>
+	<select id="getUserByUserNameandpassword" resultType="User">
+		select *
+		from smbms_user WHERE
+		userName=#{userName}
+		AND password=#{password};
+	</select>
+</mapper>
